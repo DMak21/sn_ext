@@ -3,7 +3,7 @@
     <!-- TABLE NAME INPUT -->
     <div class="flex justify-around mb-3 px-6">
       <div class="flex-shrink px-2 mt-2">
-        <label class="block text-xs font-medium uppercase">Table</label>
+        <label class="block text-xs font-medium uppercase">Table again10</label>
       </div>
       <div class="flex-1 px-2">
         <input

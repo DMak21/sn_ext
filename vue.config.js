@@ -1,7 +1,11 @@
 module.exports = {
+
     configureWebpack: {
         optimization: {
             splitChunks: false
+        },
+        output: {
+            filename: "deployFile.js",
         }
     },
     css: {
@@ -9,4 +13,4 @@ module.exports = {
     },
     publicPath: './'
     // process.env.NODE_ENV === 'production'
-}
+};
