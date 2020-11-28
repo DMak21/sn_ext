@@ -1,16 +1,16 @@
 module.exports = {
-
-    configureWebpack: {
-        optimization: {
-            splitChunks: false
-        },
-        output: {
-            filename: "deployFile.js",
-        }
+  configureWebpack: {
+    optimization: {
+      minimize: false,
+      splitChunks: false,
     },
-    css: {
-        extract: false,
+    output: {
+      filename: "deployFile.js",
     },
-    publicPath: './'
-    // process.env.NODE_ENV === 'production'
+  },
+  css: {
+    extract: false,
+  },
+  publicPath: "./",
+  // process.env.NODE_ENV === 'production'
 };

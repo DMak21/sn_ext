@@ -2,8 +2,8 @@
   "manifest_version": 2,
   "name": "SN Ext",
   "description": "Update / Delete Records",
-  "version": "1.0.1",
-  "permissions": ["tabs", "https://*.service-now.com/"],
+  "version": "1.0.2",
+  "permissions": ["tabs", "https://*.service-now.com/", "storage"],
   "icons": {
     "48": "sn48.png",
     "96": "sn96.png"

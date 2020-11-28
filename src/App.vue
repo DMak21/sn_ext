@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <div class="absolute left-1/2 transform -translate-x-1/2 w-screen max-w-md h-full">
+    <div
+      class="absolute left-1/2 transform -translate-x-1/2 w-screen max-w-md h-full"
+    >
       <div id="card" class="rounded-md shadow-lg overflow-hidden h-full">
         <div class="relative grid gap-1 px-4 py-2">
           <!-- TAB - NAVIGATION -->
@@ -11,19 +13,20 @@
                 class="w-1/2 py-2 px-1 text-center border-b-2 font-medium text-sm leading-5"
                 :class="getClassForTab('print-values')"
                 @click="tabChange('print-values')"
-              >Print Values</a>
+                >Print Values</a
+              >
               <a
                 href="#"
                 class="w-1/2 py-2 px-1 text-center border-b-2 font-medium text-sm leading-5"
                 :class="getClassForTab('update-records')"
                 @click="tabChange('update-records')"
-              >Update Records</a>
+                >Update Records</a
+              >
             </nav>
           </div>
 
-          <update-records v-if="tab=='update-records'"></update-records>
-          <print-values v-if="tab=='print-values'"></print-values>
-
+          <update-records v-if="tab == 'update-records'"></update-records>
+          <print-values v-if="tab == 'print-values'"></print-values>
         </div>
       </div>
     </div>
@@ -38,25 +41,25 @@ export default {
   name: "App",
   components: {
     "update-records": UpdateRecords,
-    "print-values": PrintValues
+    "print-values": PrintValues,
   },
-  data(){
+  data() {
     return {
-      tab: "print-values"
-    }
+      tab: "update-records",
+    };
   },
   methods: {
-    tabChange(tab){
+    tabChange(tab) {
       this.tab = tab;
     },
-    getClassForTab(tab){
+    getClassForTab(tab) {
       return {
-        'border-blue-500 text-blue-600 focus:outline-none focus:text-blue-800 focus:border-blue-700':
-          tab==this.tab,
-        'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:text-gray-700 focus:border-gray-300':
-          tab!=this.tab,
-      }
-    }
-  }
+        "border-blue-500 text-blue-600 focus:outline-none focus:text-blue-800 focus:border-blue-700":
+          tab == this.tab,
+        "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:text-gray-700 focus:border-gray-300":
+          tab != this.tab,
+      };
+    },
+  },
 };
 </script>

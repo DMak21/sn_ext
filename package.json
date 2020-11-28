@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build && npm run copy:file",
     "lint": "vue-cli-service lint",
-    "dev" : "watch 'npm run build' src" ,
+    "dev": "watch 'npm run build' src",
     "copy:file": "cp dist/deployFile.js extensions/chrome_ext/js/."
   },
   "dependencies": {

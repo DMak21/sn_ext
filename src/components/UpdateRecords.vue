@@ -3,7 +3,7 @@
     <!-- TABLE NAME INPUT -->
     <div class="flex justify-around mb-3 px-6">
       <div class="flex-shrink px-2 mt-2">
-        <label class="block text-xs font-medium uppercase">Table again10</label>
+        <label class="block text-xs font-medium uppercase">Table</label>
       </div>
       <div class="flex-1 px-2">
         <input
@@ -11,9 +11,9 @@
           placeholder="table_name"
           v-model="table"
           :class="{
-                  'border-red-300 focus:border-red-300 focus:shadow-outline-red':
-                    $v.table.$error,
-                }"
+            'border-red-300 focus:border-red-300 focus:shadow-outline-red':
+              $v.table.$error,
+          }"
           ref="tableInput"
         />
         <p v-if="$v.table.$error" class="text-xs text-red-600">
@@ -23,7 +23,7 @@
     </div>
 
     <!-- SYS_ID INPUT -->
-    <div class="flex justify-around">
+    <div class="flex justify-around mb-1">
       <div class="mt-1 w-1/3">
         <input
           id="sys_id"
@@ -43,9 +43,9 @@
           ref="sysQueryInput"
           v-model="sysId"
           :class="{
-                  'border-red-300 focus:border-red-300 focus:shadow-outline-red':
-                    $v.sysId.$error,
-                }"
+            'border-red-300 focus:border-red-300 focus:shadow-outline-red':
+              $v.sysId.$error,
+          }"
         />
         <p v-if="$v.sysId.$error" class="text-xs text-red-600">
           <i class="fa fa-exclamation"></i> sys_id is required
@@ -74,9 +74,9 @@
           ref="encQueryInput"
           v-model="encodedQuery"
           :class="{
-                  'border-red-300 focus:border-red-300 focus:shadow-outline-red':
-                    $v.encodedQuery.$error,
-                }"
+            'border-red-300 focus:border-red-300 focus:shadow-outline-red':
+              $v.encodedQuery.$error,
+          }"
         />
         <p v-if="$v.encodedQuery.$error" class="text-xs text-red-600">
           <i class="fa fa-exclamation"></i> encoded_query is required
@@ -85,24 +85,44 @@
     </div>
 
     <!-- VALUES TO BE UPDATED LABEL -->
-    <div class="flex">
-      <label class="block text-xs font-medium leading-5">Values to be updated:</label>
+    <div class="flex flex-row justify-between mb-1">
+      <label class="block text-xs font-medium leading-5"
+        >Values to be updated:</label
+      >
+      <button
+        type="button"
+        v-show="valuesToBeUpdated.length != 0"
+        class="inline-flex items-center px-1 mr-2 border border-transparent text-xs font-light rounded-full text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+        @click="clearKeyValues"
+      >
+        Clear All
+      </button>
+      <button
+        type="button"
+        v-show="showClearValuesFromStorage"
+        class="inline-flex items-center px-1 mr-2 border border-transparent text-xs font-light rounded-full text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+        @click="clearKeyValuesFromStorage"
+      >
+        Clear from Storage
+      </button>
     </div>
 
-    <!-- KEY-VALUE PAIRS (- READONLY) -->
-    <div class="flex items-center" v-for="(item, index) in valuesToBeUpdated" :key="index">
-      <div class="flex-1 pr-2">
+    <!-- KEY-VALUE PAIRS (-) -->
+    <div
+      class="flex items-center"
+      v-for="(item, index) in valuesToBeUpdated"
+      :key="index"
+    >
+      <div class="flex-1 pr-2 mb-1">
         <input
           class="form-input relative block w-full focus:z-10 text-xs"
-          :value="item.key"
-          readonly
+          v-model="item.key"
         />
       </div>
-      <div class="flex-1 pr-2">
+      <div class="flex-1 pr-2 mb-1">
         <input
           class="form-input relative block w-full focus:z-10 text-xs"
-          :value="item.value"
-          readonly
+          v-model="item.value"
         />
       </div>
       <div class="flex-shrink">
@@ -114,13 +134,13 @@
 
     <!-- KEY-VALUE PAIRS (+) -->
     <div class="flex items-start">
-      <div class="flex-1 pr-2">
+      <div class="flex-1 pr-2 mb-1">
         <input
           class="form-input relative block w-full focus:z-10 text-xs"
           :class="{
-                  'border-red-300 focus:border-red-300 focus:shadow-outline-red':
-                    $v.newValue.key.$error,
-                }"
+            'border-red-300 focus:border-red-300 focus:shadow-outline-red':
+              $v.newValue.key.$error,
+          }"
           placeholder="key"
           v-model="newValue.key"
         />
@@ -128,19 +148,12 @@
           <i class="fa fa-exclamation"></i> Key is required
         </p>
       </div>
-      <div class="flex-1 pr-2">
+      <div class="flex-1 pr-2 mb-1">
         <input
           class="form-input relative block w-full focus:z-10 text-xs"
           placeholder="value"
-          :class="{
-                  'border-red-300 focus:border-red-300 focus:shadow-outline-red':
-                    $v.newValue.value.$error,
-                }"
           v-model="newValue.value"
         />
-        <p v-if="$v.newValue.value.$error" class="text-xs text-red-600">
-          <i class="fa fa-exclamation"></i> Value is required
-        </p>
       </div>
       <div class="flex-shrink pt-2">
         <button class="focus:outline-none" @click="addValue">
@@ -149,8 +162,8 @@
       </div>
     </div>
     <p v-if="newValueError" class="text-xs text-red-600">
-      <i class="fa fa-exclamation"></i> Please add or empty out final key
-      value pair
+      <i class="fa fa-exclamation"></i> Please add or empty out final key value
+      pair
     </p>
 
     <!-- WORKFLOW CHECKBOX -->
@@ -193,15 +206,16 @@
     <!-- INFO MESSAGES -->
     <div class="flex flex-col items-start my-1 px-2">
       <p v-if="snTabError" class="text-xs text-red-600">
-        <i class="fa fa-exclamation"></i> Kindly run the extension in a ServiceNow Instance
+        <i class="fa fa-exclamation"></i> Kindly run the extension in a
+        ServiceNow Instance
       </p>
       <p class="text-xs text-grey-600">
-        <i class="fa fa-info"></i> Keep value as null if required to be
-        empty
+        <i class="fa fa-info"></i> Make encoded query as * if referring to all
+        records
       </p>
-      <p class="text-xs text-grey-600">
-        <i class="fa fa-info"></i> Make encoded query as * if referring to all records
-      </p>
+      <!-- <p class="text-xs text-grey-600">
+        <i class="fa fa-info"></i> {{ this.log }}
+      </p> -->
     </div>
 
     <!-- UPDATE RECORDS BUTTON -->
@@ -211,7 +225,9 @@
           type="submit"
           class="inline-flex justify-center py-2 px-4 border border-transparent text-xs leading-5 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition duration-150 ease-in-out"
           @click="updateRecords"
-        >Update Records</button>
+        >
+          Update Records
+        </button>
       </span>
     </div>
   </div>
@@ -223,33 +239,46 @@ export default {
   data() {
     return {
       table: "",
-      workflowFalse: true,
+      workflowFalse: false,
       sysId: "",
       encodedQuery: "",
       queryFlag: true,
       valuesToBeUpdated: [],
       newValue: {
         key: "",
-        value: ""
+        value: "",
       },
       newValueError: false,
       snTabError: false,
       script: "",
       doRun: false,
       doFocus: false,
-      currentTabUrl: ""
+      currentTabUrl: "",
+      log: "",
+      showClearValuesFromStorage: false,
     };
   },
   mounted() {
     this.$refs.tableInput.focus();
     this.$refs.encQueryInput.disabled = true;
 
-    chrome.tabs.query({ currentWindow: true, active: true }, tabs => {
+    chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
       this.currentTabUrl = new URL(tabs[0].url);
       if (
         this.currentTabUrl.hostname.split(".").slice(-2, -1)[0] ===
         "service-now"
       ) {
+        if (
+          this.currentTabUrl.pathname === "/nav_to.do" &&
+          this.currentTabUrl.searchParams.has("uri")
+        ) {
+          this.currentTabUrl = new URL(
+            "https://" +
+              this.currentTabUrl.hostname +
+              decodeURI(this.currentTabUrl.searchParams.get("uri"))
+          );
+        }
+
         if (this.currentTabUrl.searchParams.has("sys_id")) {
           this.sysId = this.currentTabUrl.searchParams.get("sys_id");
           this.table = this.currentTabUrl.pathname
@@ -266,6 +295,12 @@ export default {
         }
       } else {
         this.snTabError = true;
+      }
+
+      if (!this.snTabError) {
+        chrome.storage.local.get({ [this.table]: "[]" }, (items) => {
+          this.valuesToBeUpdated = JSON.parse(items[this.table]);
+        });
       }
     });
   },
@@ -290,12 +325,10 @@ export default {
       this.$v.newValue.$touch();
       if (!this.$v.newValue.$invalid) {
         this.newValue.key = this.newValue.key.trim();
-        this.newValue.value =
-          this.newValue.value === "null" ? "" : this.newValue.value;
         this.valuesToBeUpdated.push(this.newValue);
         this.newValue = {
           key: "",
-          value: ""
+          value: "",
         };
         this.$v.newValue.$reset();
         this.newValueError = false;
@@ -319,7 +352,7 @@ export default {
         this.script += "while";
       }
       this.script += "(gr.next()){\\n";
-      this.valuesToBeUpdated.forEach(element => {
+      this.valuesToBeUpdated.forEach((element) => {
         this.script +=
           '  gr.setValue("' + element.key + '", "' + element.value + '");\\n';
       });
@@ -328,6 +361,23 @@ export default {
 
       this.script += "  gr.update();\\n";
       this.script += "}\\n";
+    },
+    clearKeyValues() {
+      this.valuesToBeUpdated = [];
+      this.newValue = {
+        key: "",
+        value: "",
+      };
+
+      chrome.storage.local.get({ [this.table]: "[]" }, (items) => {
+        if (JSON.parse(items[this.table]).length > 0) {
+          this.showClearValuesFromStorage = true;
+        }
+      });
+    },
+    clearKeyValuesFromStorage() {
+      chrome.storage.local.set({ [this.table]: [] });
+      this.showClearValuesFromStorage = false;
     },
     updateRecords() {
       let valError = false;
@@ -362,6 +412,10 @@ export default {
       const doFocus = this.doFocus;
       const currentTabUrl = this.currentTabUrl;
 
+      chrome.storage.local.set({
+        [this.table]: JSON.stringify(this.valuesToBeUpdated),
+      });
+
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.updateRecords(
           currentTabUrl.origin + "/sys.scripts.do",
@@ -370,26 +424,23 @@ export default {
           doFocus
         );
       });
-    }
+    },
   },
   validations: {
     newValue: {
       key: {
-        required
+        required,
       },
-      value: {
-        required
-      }
     },
     table: {
-      required
+      required,
     },
     sysId: {
-      required
+      required,
     },
     encodedQuery: {
-      required
-    }
-  }
+      required,
+    },
+  },
 };
 </script>

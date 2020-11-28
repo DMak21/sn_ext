@@ -11,9 +11,9 @@
           placeholder="table_name"
           v-model="table"
           :class="{
-                  'border-red-300 focus:border-red-300 focus:shadow-outline-red':
-                    $v.table.$error,
-                }"
+            'border-red-300 focus:border-red-300 focus:shadow-outline-red':
+              $v.table.$error,
+          }"
           ref="tableInput"
         />
         <p v-if="$v.table.$error" class="text-xs text-red-600">
@@ -43,9 +43,9 @@
           ref="sysQueryInput"
           v-model="sysId"
           :class="{
-                  'border-red-300 focus:border-red-300 focus:shadow-outline-red':
-                    $v.sysId.$error,
-                }"
+            'border-red-300 focus:border-red-300 focus:shadow-outline-red':
+              $v.sysId.$error,
+          }"
         />
         <p v-if="$v.sysId.$error" class="text-xs text-red-600">
           <i class="fa fa-exclamation"></i> sys_id is required
@@ -74,9 +74,9 @@
           ref="encQueryInput"
           v-model="encodedQuery"
           :class="{
-                  'border-red-300 focus:border-red-300 focus:shadow-outline-red':
-                    $v.encodedQuery.$error,
-                }"
+            'border-red-300 focus:border-red-300 focus:shadow-outline-red':
+              $v.encodedQuery.$error,
+          }"
         />
         <p v-if="$v.encodedQuery.$error" class="text-xs text-red-600">
           <i class="fa fa-exclamation"></i> encoded_query is required
@@ -86,11 +86,17 @@
 
     <!-- VALUES TO BE UPDATED LABEL -->
     <div class="flex">
-      <label class="block text-xs font-medium leading-5">Keys for which values are to be printed:</label>
+      <label class="block text-xs font-medium leading-5"
+        >Keys for which values are to be printed:</label
+      >
     </div>
 
     <!-- KEYS (- READONLY) -->
-    <div class="flex items-start justify-center" v-for="(item, index) in keysToBePrinted" :key="index">
+    <div
+      class="flex items-start justify-center"
+      v-for="(item, index) in keysToBePrinted"
+      :key="index"
+    >
       <div class="pr-2 w-2/3">
         <input
           class="form-input relative block w-full focus:z-10 text-xs"
@@ -111,9 +117,9 @@
         <input
           class="form-input relative block w-full focus:z-10 text-xs"
           :class="{
-                  'border-red-300 focus:border-red-300 focus:shadow-outline-red':
-                    $v.key.$error,
-                }"
+            'border-red-300 focus:border-red-300 focus:shadow-outline-red':
+              $v.key.$error,
+          }"
           placeholder="key"
           v-model="key"
         />
@@ -128,8 +134,8 @@
       </div>
     </div>
     <p v-if="newValueError" class="text-xs text-red-600">
-      <i class="fa fa-exclamation"></i> Please add or empty out final key
-      value pair
+      <i class="fa fa-exclamation"></i> Please add or empty out final key value
+      pair
     </p>
 
     <!-- WORKFLOW CHECKBOX -->
@@ -161,10 +167,12 @@
     <!-- INFO MESSAGES -->
     <div class="flex flex-col items-start my-1 px-2">
       <p v-if="snTabError" class="text-xs text-red-600">
-        <i class="fa fa-exclamation"></i> Kindly run the extension in a ServiceNow Instance
+        <i class="fa fa-exclamation"></i> Kindly run the extension in a
+        ServiceNow Instance
       </p>
       <p class="text-xs text-grey-600">
-        <i class="fa fa-info"></i> Make encoded query as * if referring to all records
+        <i class="fa fa-info"></i> Make encoded query as * if referring to all
+        records
       </p>
     </div>
 
@@ -175,7 +183,9 @@
           type="submit"
           class="inline-flex justify-center py-2 px-4 border border-transparent text-xs leading-5 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition duration-150 ease-in-out"
           @click="updateRecords"
-        >Print Values</button>
+        >
+          Print Values
+        </button>
       </span>
     </div>
   </div>
@@ -197,19 +207,29 @@ export default {
       script: "",
       doRun: true,
       doFocus: true,
-      currentTabUrl: ""
+      currentTabUrl: "",
     };
   },
   mounted() {
     this.$refs.tableInput.focus();
     this.$refs.encQueryInput.disabled = true;
 
-    chrome.tabs.query({ currentWindow: true, active: true }, tabs => {
+    chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
       this.currentTabUrl = new URL(tabs[0].url);
       if (
         this.currentTabUrl.hostname.split(".").slice(-2, -1)[0] ===
         "service-now"
       ) {
+        if (
+          this.currentTabUrl.pathname === "/nav_to.do" &&
+          this.currentTabUrl.searchParams.has("uri")
+        ) {
+          this.currentTabUrl = new URL(
+            "https://" +
+              this.currentTabUrl.hostname +
+              decodeURI(this.currentTabUrl.searchParams.get("uri"))
+          );
+        }
         if (this.currentTabUrl.searchParams.has("sys_id")) {
           this.sysId = this.currentTabUrl.searchParams.get("sys_id");
           this.table = this.currentTabUrl.pathname
@@ -251,8 +271,7 @@ export default {
       if (!this.$v.key.$invalid) {
         this.key = this.key.trim();
         this.keysToBePrinted.push(this.key);
-        this.key = "",
-        this.$v.key.$reset();
+        (this.key = ""), this.$v.key.$reset();
         this.newValueError = false;
       }
     },
@@ -260,7 +279,7 @@ export default {
       this.keysToBePrinted.splice(index, 1);
     },
     createScript() {
-			this.script = 'var result = "\\\\n";\\n';
+      this.script = 'var result = "\\\\n";\\n';
       this.script += 'var gr = new GlideRecord("' + this.table + '");\\n';
       if (this.queryFlag) {
         this.script += 'gr.addQuery("sys_id", "' + this.sysId + '");\\n';
@@ -274,15 +293,17 @@ export default {
         this.script += "gr.query();\\n";
         this.script += "while";
       }
-			this.script += "(gr.next()){\\n";
-			this.script += '  result += (gr.sys_id + " | " + gr.getDisplayValue() + "\\\\n");\\n';
-      this.keysToBePrinted.forEach(key => {
-        this.script += '  result += ("' + key + ' => " + gr.'+ key +' + "\\\\n");\\n';
-			});
-			this.script += '  result += ("\\\\n");\\n';
+      this.script += "(gr.next()){\\n";
+      this.script +=
+        '  result += (gr.sys_id + " | " + gr.getDisplayValue() + "\\\\n");\\n';
+      this.keysToBePrinted.forEach((key) => {
+        this.script +=
+          '  result += ("' + key + ' => " + gr.' + key + ' + "\\\\n");\\n';
+      });
+      this.script += '  result += ("\\\\n");\\n';
 
-			this.script += "}\\n";
-			this.script += "gs.print(result);\\n";
+      this.script += "}\\n";
+      this.script += "gs.print(result);\\n";
     },
     updateRecords() {
       let valError = false;
@@ -315,8 +336,8 @@ export default {
       const script = this.script;
       const doRun = this.doRun;
       const doFocus = this.doFocus;
-			const currentTabUrl = this.currentTabUrl;
-			
+      const currentTabUrl = this.currentTabUrl;
+
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.updateRecords(
           currentTabUrl.origin + "/sys.scripts.do",
@@ -325,21 +346,21 @@ export default {
           doFocus
         );
       });
-    }
+    },
   },
   validations: {
-		key: {
-			required
-		},
+    key: {
+      required,
+    },
     table: {
-      required
+      required,
     },
     sysId: {
-      required
+      required,
     },
     encodedQuery: {
-      required
-    }
-  }
+      required,
+    },
+  },
 };
 </script>
