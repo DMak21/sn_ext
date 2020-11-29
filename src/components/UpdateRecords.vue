@@ -2,7 +2,7 @@
   <div>
     <!-- TABLE NAME INPUT -->
     <div class="flex justify-around mb-3 px-6">
-      <div class="flex-shrink px-2 mt-2">
+      <div class="flex-shrink px-2 self-center">
         <label class="block text-xs font-medium uppercase">Table</label>
       </div>
       <div class="flex-1 px-2">
@@ -24,13 +24,14 @@
 
     <!-- SYS_ID INPUT -->
     <div class="flex justify-around mb-1">
-      <div class="mt-1 w-1/3">
+      <div class="w-1/3 self-center">
         <input
           id="sys_id"
           type="radio"
           class="form-radio h-4 w-4 mr-1 text-blue-600 transition duration-150 ease-in-out"
+          v-model="queryFlag"
           @change="handleQuerySelection"
-          :checked="queryFlag"
+          :value="true"
         />
         <label for="sys_id">
           <span class="leading-5 text-xs">sys_id</span>
@@ -46,6 +47,7 @@
             'border-red-300 focus:border-red-300 focus:shadow-outline-red':
               $v.sysId.$error,
           }"
+          @focus="handleQuerySelection(true)"
         />
         <p v-if="$v.sysId.$error" class="text-xs text-red-600">
           <i class="fa fa-exclamation"></i> sys_id is required
@@ -55,13 +57,14 @@
 
     <!-- ENCODED_QUERY INPUT -->
     <div class="flex justify-around mb-4">
-      <div class="mt-2 w-1/3">
+      <div class="w-1/3 self-center">
         <input
           id="encoded_query"
           type="radio"
           class="form-radio h-4 w-4 mr-1 text-blue-600 transition duration-150 ease-in-out"
+          v-model="queryFlag"
           @change="handleQuerySelection"
-          :checked="!queryFlag"
+          :value="false"
         />
         <label for="encoded_query">
           <span class="leading-5 text-xs">encoded_query</span>
@@ -77,6 +80,7 @@
             'border-red-300 focus:border-red-300 focus:shadow-outline-red':
               $v.encodedQuery.$error,
           }"
+          @focus="handleQuerySelection(false)"
         />
         <p v-if="$v.encodedQuery.$error" class="text-xs text-red-600">
           <i class="fa fa-exclamation"></i> encoded_query is required
@@ -99,7 +103,7 @@
       </button>
       <button
         type="button"
-        v-show="showClearValuesFromStorage"
+        v-show="showClearValuesFromStorage && valuesToBeUpdated.length == 0"
         class="inline-flex items-center px-1 mr-2 border border-transparent text-xs font-light rounded-full text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
         @click="clearKeyValuesFromStorage"
       >
@@ -109,23 +113,23 @@
 
     <!-- KEY-VALUE PAIRS (-) -->
     <div
-      class="flex items-center"
+      class="flex items-center mb-1"
       v-for="(item, index) in valuesToBeUpdated"
       :key="index"
     >
-      <div class="flex-1 pr-2 mb-1">
+      <div class="flex-1 pr-2">
         <input
           class="form-input relative block w-full focus:z-10 text-xs"
           v-model="item.key"
         />
       </div>
-      <div class="flex-1 pr-2 mb-1">
+      <div class="flex-1 pr-2">
         <input
           class="form-input relative block w-full focus:z-10 text-xs"
           v-model="item.value"
         />
       </div>
-      <div class="flex-shrink">
+      <div class="flex-shrink self-center">
         <button class="focus:outline-none" @click="deleteValue(index)">
           <i class="fa fa-minus-circle text-red-600"></i>
         </button>
@@ -133,8 +137,8 @@
     </div>
 
     <!-- KEY-VALUE PAIRS (+) -->
-    <div class="flex items-start">
-      <div class="flex-1 pr-2 mb-1">
+    <div class="flex items-start mb-1">
+      <div class="flex-1 pr-2">
         <input
           class="form-input relative block w-full focus:z-10 text-xs"
           :class="{
@@ -148,14 +152,14 @@
           <i class="fa fa-exclamation"></i> Key is required
         </p>
       </div>
-      <div class="flex-1 pr-2 mb-1">
+      <div class="flex-1 pr-2">
         <input
           class="form-input relative block w-full focus:z-10 text-xs"
           placeholder="value"
           v-model="newValue.value"
         />
       </div>
-      <div class="flex-shrink pt-2">
+      <div class="flex-shrink self-center">
         <button class="focus:outline-none" @click="addValue">
           <i class="fa fa-plus-circle text-blue-600"></i>
         </button>
@@ -214,7 +218,8 @@
         records
       </p>
       <!-- <p class="text-xs text-grey-600">
-        <i class="fa fa-info"></i> {{ this.log }}
+        <i class="fa fa-info"></i>
+        {{ this.queryFlag + " " + typeof this.queryFlag }}
       </p> -->
     </div>
 
@@ -254,13 +259,17 @@ export default {
       doRun: false,
       doFocus: false,
       currentTabUrl: "",
-      log: "",
+      // log: "",
       showClearValuesFromStorage: false,
     };
   },
+  computed: {
+    now: function() {
+      return Date.now();
+    },
+  },
   mounted() {
     this.$refs.tableInput.focus();
-    this.$refs.encQueryInput.disabled = true;
 
     chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
       this.currentTabUrl = new URL(tabs[0].url);
@@ -280,11 +289,13 @@ export default {
         }
 
         if (this.currentTabUrl.searchParams.has("sys_id")) {
+          // this.$refs.sysQueryInput.focus();
           this.sysId = this.currentTabUrl.searchParams.get("sys_id");
           this.table = this.currentTabUrl.pathname
             .split("/")[1]
             .replace(".do", "");
         } else if (this.currentTabUrl.searchParams.has("sysparm_query")) {
+          // this.$refs.encQueryInput.focus();
           this.queryFlag = false;
           this.encodedQuery = decodeURI(
             this.currentTabUrl.searchParams.get("sysparm_query")
@@ -305,18 +316,12 @@ export default {
     });
   },
   methods: {
-    handleQuerySelection() {
-      this.queryFlag = !this.queryFlag;
+    handleQuerySelection(param) {
+      if (typeof param == "boolean") this.queryFlag = param;
       if (this.queryFlag) {
-        this.encodedQuery = "";
-        this.$refs.encQueryInput.disabled = true;
-        this.$refs.sysQueryInput.disabled = false;
         this.$refs.sysQueryInput.focus();
         this.$v.encodedQuery.$reset();
       } else {
-        this.sysId = "";
-        this.$refs.sysQueryInput.disabled = true;
-        this.$refs.encQueryInput.disabled = false;
         this.$refs.encQueryInput.focus();
         this.$v.sysId.$reset();
       }

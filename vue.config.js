@@ -1,16 +1,15 @@
 module.exports = {
   configureWebpack: {
     optimization: {
-      minimize: false,
+      // minimize: false,
       splitChunks: false,
     },
     output: {
-      filename: "deployFile.js",
+      filename: "app.js",
     },
   },
   css: {
     extract: false,
   },
   publicPath: "./",
-  // process.env.NODE_ENV === 'production'
 };

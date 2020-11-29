@@ -10,23 +10,31 @@
             <nav class="flex">
               <a
                 href="#"
-                class="w-1/2 py-2 px-1 text-center border-b-2 font-medium text-sm leading-5"
+                class="flex-1 py-2 px-1 text-center border-b-2 font-medium text-sm leading-5"
                 :class="getClassForTab('print-values')"
                 @click="tabChange('print-values')"
                 >Print Values</a
               >
               <a
                 href="#"
-                class="w-1/2 py-2 px-1 text-center border-b-2 font-medium text-sm leading-5"
+                class="flex-1 py-2 px-1 text-center border-b-2 font-medium text-sm leading-5"
                 :class="getClassForTab('update-records')"
                 @click="tabChange('update-records')"
                 >Update Records</a
               >
+              <!-- <a
+                href="#"
+                class="flex-shrink py-2 px-2 text-center border-b-2 font-medium text-sm leading-5"
+                :class="getClassForTab('settings')"
+                @click="tabChange('settings')"
+                ><i class="fa fa-cog"></i
+              ></a> -->
             </nav>
           </div>
 
           <update-records v-if="tab == 'update-records'"></update-records>
           <print-values v-if="tab == 'print-values'"></print-values>
+          <settings v-if="tab == 'settings'"></settings>
         </div>
       </div>
     </div>
@@ -36,12 +44,14 @@
 <script>
 import UpdateRecords from "./components/UpdateRecords.vue";
 import PrintValues from "./components/PrintValues.vue";
+import Settings from "./components/Settings.vue";
 
 export default {
   name: "App",
   components: {
     "update-records": UpdateRecords,
     "print-values": PrintValues,
+    settings: Settings,
   },
   data() {
     return {
