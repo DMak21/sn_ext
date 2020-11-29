@@ -18,6 +18,3 @@ yarn build
 - Navigate to about:debugging
 - Select "This Firefox" on left
 - Click "Load Temporary Add-on" and select extensions/firefox_ext/manifest.json
-  OR
-- Navigate to about:addons
-- Drag and drop extensions/firefox_ext/
