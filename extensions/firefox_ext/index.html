@@ -15,7 +15,8 @@
     rel=icon href=favicon.ico>
   <title>extension</title>
   <style>
-    html,body {
+    html,
+    body {
       min-height: 450px;
       min-width: 370px
     }
@@ -27,6 +28,14 @@
 
     ::-webkit-scrollbar {
       width: 5px;
+    }
+
+    loading * {
+      transition: none !important;
+      -webkit-transition: none !important;
+      -moz-transition: none !important;
+      -ms-transition: none !important;
+      -o-transition: none !important;
     }
   </style>
   <link href=/js/app.js rel=preload as=script>

@@ -1,98 +1,26 @@
 <template>
   <div>
-    <!-- TABLE NAME INPUT -->
-    <div class="flex justify-around mb-3 px-6">
-      <div class="flex-shrink px-2 self-center">
-        <label class="block text-xs font-medium uppercase">Table</label>
-      </div>
-      <div class="flex-1 px-2">
-        <input
-          class="form-input relative block w-full focus:z-10 text-xs"
-          placeholder="table_name"
-          v-model="table"
-          :class="{
-            'border-red-300 focus:border-red-300 focus:shadow-outline-red':
-              $v.table.$error,
-          }"
-          ref="tableInput"
-        />
-        <p v-if="$v.table.$error" class="text-xs text-red-600">
-          <i class="fa fa-exclamation"></i> Table name is required
-        </p>
-      </div>
-    </div>
-
-    <!-- SYS_ID INPUT -->
-    <div class="flex justify-around mb-1">
-      <div class="w-1/3 self-center">
-        <input
-          id="sys_id"
-          type="radio"
-          class="form-radio h-4 w-4 mr-1 text-blue-600 transition duration-150 ease-in-out"
-          v-model="queryFlag"
-          @change="handleQuerySelection"
-          :value="true"
-        />
-        <label for="sys_id">
-          <span class="leading-5 text-xs">sys_id</span>
-        </label>
-      </div>
-      <div class="w-2/3 pr-2">
-        <input
-          class="form-input relative block w-full focus:z-10 text-xs"
-          placeholder="sys_id"
-          ref="sysQueryInput"
-          v-model="sysId"
-          :class="{
-            'border-red-300 focus:border-red-300 focus:shadow-outline-red':
-              $v.sysId.$error,
-          }"
-          @focus="handleQuerySelection(true)"
-        />
-        <p v-if="$v.sysId.$error" class="text-xs text-red-600">
-          <i class="fa fa-exclamation"></i> sys_id is required
-        </p>
-      </div>
-    </div>
-
-    <!-- ENCODED_QUERY INPUT -->
-    <div class="flex justify-around mb-4">
-      <div class="w-1/3 self-center">
-        <input
-          id="encoded_query"
-          type="radio"
-          class="form-radio h-4 w-4 mr-1 text-blue-600 transition duration-150 ease-in-out"
-          v-model="queryFlag"
-          @change="handleQuerySelection"
-          :value="false"
-        />
-        <label for="encoded_query">
-          <span class="leading-5 text-xs">encoded_query</span>
-        </label>
-      </div>
-      <div class="w-2/3 pr-2">
-        <input
-          class="form-input relative block w-full focus:z-10 text-xs"
-          placeholder="encoded_query"
-          ref="encQueryInput"
-          v-model="encodedQuery"
-          :class="{
-            'border-red-300 focus:border-red-300 focus:shadow-outline-red':
-              $v.encodedQuery.$error,
-          }"
-          @focus="handleQuerySelection(false)"
-        />
-        <p v-if="$v.encodedQuery.$error" class="text-xs text-red-600">
-          <i class="fa fa-exclamation"></i> encoded_query is required
-        </p>
-      </div>
-    </div>
-
     <!-- VALUES TO BE UPDATED LABEL -->
-    <div class="flex">
+    <div class="flex flex-row justify-between mb-1">
       <label class="block text-xs font-medium leading-5"
-        >Keys for which values are to be printed:</label
+        >Values to be printed for keys:</label
       >
+      <button
+        type="button"
+        v-show="keysToBePrinted.length != 0"
+        class="inline-flex items-center px-1 mr-2 border border-transparent text-xs font-light rounded-full text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+        @click="clearKeys"
+      >
+        Clear All
+      </button>
+      <button
+        type="button"
+        v-show="showClearKeysFromStorage && keysToBePrinted.length == 0"
+        class="inline-flex items-center px-1 mr-2 border border-transparent text-xs font-light rounded-full text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+        @click="clearKeysFromStorage"
+      >
+        Clear from Storage
+      </button>
     </div>
 
     <!-- KEYS (- READONLY) -->
@@ -148,9 +76,9 @@
           id="doRun"
           type="checkbox"
           class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
-          v-model="doRun"
-          @change="!doRun"
-          :checked="doRun"
+          v-model="pRun"
+          @change="!pRun"
+          :checked="pRun"
         />
         <label for="doRun" class="text-xs ml-2">Run</label>
       </div>
@@ -159,9 +87,9 @@
           id="doFocus"
           type="checkbox"
           class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
-          v-model="doFocus"
-          @change="!doFocus"
-          :checked="doFocus"
+          v-model="pFocus"
+          @change="!pFocus"
+          :checked="pFocus"
         />
         <label for="doFocus" class="text-xs ml-2">Focus</label>
       </div>
@@ -195,73 +123,41 @@
 </template>
 
 <script>
+import { mapFields } from "vuex-map-fields";
+
 const { required } = require("vuelidate/lib/validators");
+
 export default {
   data() {
     return {
-      table: "",
-      sysId: "",
-      encodedQuery: "",
-      queryFlag: true,
-      keysToBePrinted: [],
       key: "",
       newValueError: false,
-      snTabError: false,
       script: "",
-      doRun: true,
-      doFocus: true,
-      currentTabUrl: "",
+      showClearKeysFromStorage: false,
     };
   },
+  computed: {
+    ...mapFields([
+      "scope",
+      "pRun",
+      "pFocus",
+      "table",
+      "sysId",
+      "encodedQuery",
+      "queryFlag",
+      "currentTabUrl",
+      "snTabError",
+      "valuesToBeUpdated",
+      "keysToBePrinted",
+    ]),
+  },
   mounted() {
-    this.$refs.tableInput.focus();
-
-    chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
-      this.currentTabUrl = new URL(tabs[0].url);
-      if (
-        this.currentTabUrl.hostname.split(".").slice(-2, -1)[0] ===
-        "service-now"
-      ) {
-        if (
-          this.currentTabUrl.pathname === "/nav_to.do" &&
-          this.currentTabUrl.searchParams.has("uri")
-        ) {
-          this.currentTabUrl = new URL(
-            "https://" +
-              this.currentTabUrl.hostname +
-              decodeURI(this.currentTabUrl.searchParams.get("uri"))
-          );
-        }
-        if (this.currentTabUrl.searchParams.has("sys_id")) {
-          this.sysId = this.currentTabUrl.searchParams.get("sys_id");
-          this.table = this.currentTabUrl.pathname
-            .split("/")[1]
-            .replace(".do", "");
-        } else if (this.currentTabUrl.searchParams.has("sysparm_query")) {
-          this.queryFlag = false;
-          this.encodedQuery = decodeURI(
-            this.currentTabUrl.searchParams.get("sysparm_query")
-          );
-          this.table = this.currentTabUrl.pathname
-            .split("/")[1]
-            .replace("_list.do", "");
-        }
-      } else {
-        this.snTabError = true;
-      }
-    });
+    this.$parent.$refs.tableInput.focus();
+    this.$parent.$v.table.$reset();
+    this.$parent.$v.sysId.$reset();
+    this.$parent.$v.encodedQuery.$reset();
   },
   methods: {
-    handleQuerySelection(param) {
-      if (typeof param == "boolean") this.queryFlag = param;
-      if (this.queryFlag) {
-        this.$refs.sysQueryInput.focus();
-        this.$v.encodedQuery.$reset();
-      } else {
-        this.$refs.encQueryInput.focus();
-        this.$v.sysId.$reset();
-      }
-    },
     addValue() {
       this.$v.key.$touch();
       if (!this.$v.key.$invalid) {
@@ -276,6 +172,9 @@ export default {
     },
     createScript() {
       this.script = 'var result = "\\\\n";\\n';
+      this.script += 'result += ("';
+      this.script += this.keysToBePrinted.join(",");
+      this.script += '\\\\n");\\n';
       this.script += 'var gr = new GlideRecord("' + this.table + '");\\n';
       if (this.queryFlag) {
         this.script += 'gr.addQuery("sys_id", "' + this.sysId + '");\\n';
@@ -290,23 +189,37 @@ export default {
         this.script += "while";
       }
       this.script += "(gr.next()){\\n";
-      this.script +=
-        '  result += (gr.sys_id + " | " + gr.getDisplayValue() + "\\\\n");\\n';
-      this.keysToBePrinted.forEach((key) => {
-        this.script +=
-          '  result += ("' + key + ' => " + gr.' + key + ' + "\\\\n");\\n';
-      });
-      this.script += '  result += ("\\\\n");\\n';
-
+      this.script += "  result += (";
+      this.script += this.keysToBePrinted
+        .map((key) => "gr." + key)
+        .join(' + "," + ');
+      this.script += ' + "\\\\n");\\n';
       this.script += "}\\n";
       this.script += "gs.print(result);\\n";
+    },
+    clearKeys() {
+      this.keysToBePrinted = [];
+      this.key = "";
+
+      chrome.storage.local.get(null, (items) => {
+        if (this.table in items) {
+          const tableValues = JSON.parse(items[this.table]);
+          if (tableValues.p.length > 0) this.showClearKeysFromStorage = true;
+        }
+      });
+    },
+    clearKeysFromStorage() {
+      chrome.storage.local.set({
+        [this.table]: JSON.stringify({ u: this.valuesToBeUpdated, p: [] }),
+      });
+      this.showClearKeysFromStorage = false;
     },
     updateRecords() {
       let valError = false;
 
-      this.$v.table.$touch();
+      this.$parent.$v.table.$touch();
       this.newValueError = this.key || this.value;
-      if (this.$v.table.$invalid || this.newValueError) valError = true;
+      if (this.$parent.$v.table.$invalid || this.newValueError) valError = true;
 
       if (this.keysToBePrinted.length === 0) {
         this.$v.key.$touch();
@@ -314,12 +227,12 @@ export default {
       }
 
       if (this.queryFlag) {
-        this.$v.sysId.$touch();
-        if (this.$v.sysId.$invalid) valError = true;
+        this.$parent.$v.sysId.$touch();
+        if (this.$parent.$v.sysId.$invalid) valError = true;
         this.sysId = this.sysId.trim();
       } else {
-        this.$v.encodedQuery.$touch();
-        if (this.$v.encodedQuery.$invalid) valError = true;
+        this.$parent.$v.encodedQuery.$touch();
+        if (this.$parent.$v.encodedQuery.$invalid) valError = true;
       }
 
       if (valError) return;
@@ -330,31 +243,31 @@ export default {
 
       this.createScript();
       const script = this.script;
-      const doRun = this.doRun;
-      const doFocus = this.doFocus;
+      const doRun = this.pRun;
+      const doFocus = this.pFocus;
       const currentTabUrl = this.currentTabUrl;
+      const scope = this.scope;
+
+      chrome.storage.local.set({
+        [this.table]: JSON.stringify({
+          u: this.valuesToBeUpdated,
+          p: this.keysToBePrinted,
+        }),
+      });
 
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.updateRecords(
           currentTabUrl.origin + "/sys.scripts.do",
           script,
           doRun,
-          doFocus
+          doFocus,
+          scope
         );
       });
     },
   },
   validations: {
     key: {
-      required,
-    },
-    table: {
-      required,
-    },
-    sysId: {
-      required,
-    },
-    encodedQuery: {
       required,
     },
   },
