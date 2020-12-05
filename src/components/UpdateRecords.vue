@@ -242,7 +242,7 @@ export default {
       chrome.storage.local.get(null, (items) => {
         if (this.table in items) {
           const tableValues = JSON.parse(items[this.table]);
-          if (tableValues.u.length > 0) this.showClearKeysFromStorage = true;
+          if (tableValues.u.length > 0) this.showClearValuesFromStorage = true;
         }
       });
     },
