@@ -69,6 +69,17 @@
       />
     </div>
 
+    <h1 class="text-base my-2">Experimental Features</h1>
+    <div class="mt-1">
+      <input
+        id="exp1"
+        type="checkbox"
+        class="form-checkbox text-blue-600 transition duration-150 ease-in-out"
+        v-model="exp1"
+      />
+      <label for="exp1" class="text-sm ml-2">Toggle Field Name/Label</label>
+    </div>
+
     <div class="flex justify-end mb-2">
       <span class="ml-3 inline-flex rounded-md shadow-sm">
         <button
@@ -94,6 +105,7 @@ export default {
       uWorkflowFalse: false,
       uRun: false,
       uFocus: false,
+      exp1: false,
     };
   },
   created() {

@@ -181,19 +181,17 @@ export default {
               decodeURI(this.currentTabUrl.searchParams.get("uri"))
           );
         }
+        this.table = this.currentTabUrl.pathname
+          .split("/")[1]
+          .replace("_list.do", "")
+          .replace(".do", "");
         if (this.currentTabUrl.searchParams.has("sys_id")) {
           this.sysId = this.currentTabUrl.searchParams.get("sys_id");
-          this.table = this.currentTabUrl.pathname
-            .split("/")[1]
-            .replace(".do", "");
         } else if (this.currentTabUrl.searchParams.has("sysparm_query")) {
           this.queryFlag = false;
           this.encodedQuery = decodeURI(
             this.currentTabUrl.searchParams.get("sysparm_query")
           );
-          this.table = this.currentTabUrl.pathname
-            .split("/")[1]
-            .replace("_list.do", "");
         }
       } else {
         this.snTabError = true;
