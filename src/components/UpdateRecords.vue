@@ -137,6 +137,15 @@
 
     <!-- UPDATE RECORDS BUTTON -->
     <div class="flex justify-end mb-2">
+      <span class="ml-3 inline-flex">
+        <button
+          type="submit"
+          class="inline-flex justify-center my-2 mx-4 text-xs leading-5 font-medium text-grey-600 border-none hover:text-blue-600 focus:outline-none"
+          @click="saveButton"
+        >
+          Save
+        </button>
+      </span>
       <span class="ml-3 inline-flex rounded-md shadow-sm">
         <button
           type="submit"
@@ -251,6 +260,14 @@ export default {
         [this.table]: JSON.stringify({ u: [], p: this.keysToBePrinted }),
       });
       this.showClearValuesFromStorage = false;
+    },
+    saveButton() {
+      chrome.storage.local.set({
+        [this.table]: JSON.stringify({
+          u: this.valuesToBeUpdated,
+          p: this.keysToBePrinted,
+        }),
+      });
     },
     updateRecords() {
       let valError = false;
