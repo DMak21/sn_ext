@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "SN Ext",
   "description": "Update / Delete Records",
-  "version": "2.2.1",
+  "version": "3.0.0",
   "permissions": ["tabs", "https://*.service-now.com/", "storage"],
   "browser_action": {
     "default_popup": "index.html",
@@ -17,6 +17,7 @@
   },
   "content_scripts": [{
     "matches": ["https://*.service-now.com/*"],
+    "all_frames": true,
     "run_at": "document_end",
     "js": ["content.js"]
   }],

@@ -15,4 +15,4 @@ yarn build
 
 ## Installing Extension in Firefox
 
-- Drag and drop sn_ext/extensions/firefox_ext/web-ext-artifacts/sn_ext-2.3.1-an+fx.xpi to Firefox Window
+- Drag and drop sn_ext/extensions/firefox_ext/web-ext-artifacts/sn_ext-3.0.0-an+fx.xpi to Firefox Window
