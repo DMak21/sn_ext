@@ -15,6 +15,4 @@ yarn build
 
 ## Installing Extension in Firefox
 
-- Navigate to about:debugging
-- Select "This Firefox" on left
-- Click "Load Temporary Add-on" and select extensions/firefox_ext/manifest.json
+- Drag and drop sn_ext/extensions/firefox_ext/web-ext-artifacts/sn_ext-2.3.1-an+fx.xpi to Firefox Window
